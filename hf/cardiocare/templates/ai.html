@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Help</title>
+
+
+
+  <!-- <link rel="stylesheet" href="styles.css"> -->
+
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  color: #333;
+}
+
+header {
+  display: flex;
+  flex-direction: row;
+  padding: 20px;
+  align-items: center;
+  width: 100%;
+  
+}
+.image {
+  height: 80px;
+  width: 80px;
+  background: black;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+  margin-left: 20px;
+}
+img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.header-right {
+  display: flex;
+  gap: 20px; /* Adds spacing between buttons */
+  margin-left: auto; /* Pushes buttons to the extreme right */
+  margin-right: 10px;
+}
+
+
+.chat-container {
+  max-width: 600px;
+  width: 100%;
+  height: 80%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-window {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #fafafa;
+}
+
+.message {
+  max-width: 75%;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 15px;
+  word-wrap: break-word;
+  line-height: 1.5;
+  transition: transform 0.3s ease;
+}
+
+.user-message {
+  background-color: #d1e7ff;
+  color: #1a1a1a;
+  align-self: flex-end;
+  border-radius: 12px 12px 0px 12px;
+  transform: translateY(10px);
+}
+
+.bot-message {
+  background-color: #e8e8e8;
+  color: #333333;
+  align-self: flex-start;
+  border-radius: 12px 12px 12px 0px;
+  transform: translateY(10px);
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #ddd;
+  padding: 12px;
+  background-color: #f9f9f9;
+}
+
+textarea {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+  resize: none;
+  background-color: #f0f0f0;
+  color: #333;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+textarea:focus {
+  border-color: #007acc;
+  box-shadow: 0 0 5px rgba(0, 122, 204, 0.5);
+}
+
+.send {
+  margin-left: 10px;
+  padding: 10px 16px;
+  background-color: #a9dcff;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.send:hover {
+  background-color: #005fa3;
+}
+
+.send:active {
+  background-color: #004a80;
+}
+
+.message.show {
+  transform: translateY(0);
+}
+
+.butt {
+  padding: 15px 30px; /* Increases .butt size */
+  background-color: #81beff; /* Blue color */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem; /* Slightly larger font */
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+  </style>
+
+
+  <script type="importmap">
+    {
+      "imports": {
+        "@google/generative-ai": "https://esm.run/@google/generative-ai"
+      }
+    }
+  </script>
+</head>
+<body>
+    <header>
+        <div class="image">
+            <!-- Add the profile picture if you have it stored, otherwise use a placeholder -->
+            <img src="C:\Users\Manu\Downloads\CardioCare-logo.png" alt="Profile Picture" width="100" height="100">
+        </div>
+        <h1>Welcome, {{ name }}</h1>
+    </div>
+    <div class="header-right">
+        <!-- Dashboard and Logout buttons -->
+        <button class="butt" onclick="location.href='/dashboard'">Dashboard</button>
+        <button class="butt"  style="background-color: #00558e;" onclick="location.href='/ai'">AI Help</button>
+        <button style="background: rgb(255, 57, 57);" class="butt" onclick="location.href='/logout'">Logout</button>
+    </div>
+    </header>
+  <div class="chat-container">
+    
+
+
+    <div id="chatWindow" class="chat-window"></div>
+
+
+    <form id="promptForm" class="input-container">
+      <textarea id="prompt" rows="2" placeholder="Type your message..." required></textarea>
+      <button class="send"  type="submit">Send</button>
+    </form>
+  </div>
+
+
+  <script type="module" >
+                 import { GoogleGenerativeAI } from "@google/generative-ai";
+
+            const API_KEY = 'AIzaSyARB4TSTJT1FRU0vsi2l7RPIUcHg1vyGfc'; 
+            const genAI = new GoogleGenerativeAI(API_KEY);
+
+            const defaultPrompt = "You are assigned as cardiac patient assistance chat bot. You are not allowed to share any info other than cardiac. The patient's name is {{name}}, age 18, heart patient, height 165cm, weight 70kg, gender male. Give friendly yet precise responses. Avoid phrases like 'I understand' and keep responses short. Use emojis like 🔵 or 🔴 for points. Provide first aid advice when needed. Patient is Indian, so 911 should not be referenced.";
+
+            let conversationHistory = `${defaultPrompt}\n`;
+
+            document.getElementById('promptForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const prompt = document.getElementById('prompt').value;
+            if (prompt.trim() === '') return;
+
+            addMessageToChat(prompt, 'user-message');
+
+            conversationHistory += `User: ${prompt}\n`;
+            document.getElementById('prompt').value = '';
+
+            try {
+                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                const result = await model.generateContent(conversationHistory);
+                const botResponse = result.response.text();
+
+                conversationHistory += `${botResponse}\n`;
+                addMessageToChat(botResponse, 'bot-message');
+
+                const botMessageDiv = document.querySelector('.bot-message:last-child');
+                botMessageDiv.innerHTML = ''; 
+                typeWriterEffect(botResponse, botMessageDiv);
+
+                // Call Text-to-Speech for the bot's response
+                // speakText(botResponse);
+
+            } catch (error) {
+                addMessageToChat(`Error: ${error.message}`, 'bot-message');
+            }
+            });
+
+            document.getElementById('prompt').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); 
+                document.getElementById('promptForm').dispatchEvent(new Event('submit')); 
+            }
+            });
+
+            function addMessageToChat(text, className) {
+            const chatWindow = document.getElementById('chatWindow');
+
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', className);
+            messageDiv.innerHTML = text;
+            chatWindow.appendChild(messageDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+
+            function typeWriterEffect(text, element) {
+            let index = 0;
+            function typeNextChar() {
+                if (index < text.length) {
+                element.innerHTML += text.charAt(index);
+                index++;
+                setTimeout(typeNextChar, 30); 
+                }
+            }
+            typeNextChar();
+            }
+
+            // Text-to-Speech Function
+            // function speakText(text) {
+            //   const utterance = new SpeechSynthesisUtterance(text);
+            //   utterance.lang = 'en-IN'; // Set language and accent (Indian English)
+            //   utterance.rate = 1;       // Set rate of speech, 1 is normal speed
+            //   utterance.pitch = 1;      // Set pitch, 1 is default
+
+            //   window.speechSynthesis.speak(utterance);
+            // }
+  </script>
+</body>
+</html>
