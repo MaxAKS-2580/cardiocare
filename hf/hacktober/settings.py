@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-*=-x_ox^ba!k_7brn5ginplm5_@eremp+n@f89j9y!1qksh5ro
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['cardiocare-vitaura.onrender.com']
 
 
 # Application definition
