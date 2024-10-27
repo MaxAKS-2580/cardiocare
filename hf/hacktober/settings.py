@@ -24,8 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*=-x_ox^ba!k_7brn5ginplm5_@eremp+n@f89j9y!1qksh5ro'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+DEBUG = False
 ALLOWED_HOSTS = ['cardiocare-vitaura.onrender.com']
 
 
